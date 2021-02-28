@@ -28,6 +28,8 @@ def main():
     # Auch wenn die Zeichen in Neologd-Wörterbuch auftaucht, werden die folgenden Zeichen in den Text aufgenommen
     add_list = [
                     '︙',    # full-width 3 points leader
+                    '。',    # Period for Japanese
+                    '、',    # Comma for Japanese
                     '―',     # full-width dash
                     '〱',    # Vertical Kana Repeat Mark
                     '〲',    # Vertical Kana Repeat with Voiced Sound Mark
@@ -43,7 +45,7 @@ def main():
 
     count_required = 20
     chars = read_chars('./traindata/chars.txt')
-    words = read_all_words('/path/to/mecab-ipadic-neologd/seed') # hier muss der korrekte Path-Name zu Neologd-Wörterbuch stehen
+    words = read_all_words('/path/to/mecab-ipadic-neologd/seed') # Hier muss der korrekte Path-Name zu Neologd-Wörterbuch stehen
     print("Total words %d" % len(words))
     training = open('./traindata/training_bs.txt', 'w', encoding='utf-8')
     random.shuffle(words)
