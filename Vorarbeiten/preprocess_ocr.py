@@ -38,6 +38,7 @@ def getTextbox(img6, original_img):
     min_area = original_img.shape[0] * original_img.shape[1] * 1e-4
     tmp = original_img.copy()
     conts = []
+    line_conts = []
     if len(contours) > 0:
         for i, contour in enumerate(contours):
             rect = cv2.boundingRect(contour)
@@ -49,7 +50,9 @@ def getTextbox(img6, original_img):
             cv2.rectangle(tmp, (rect[0], rect[1]), (rect[0]+rect[2], rect[1]+rect[3]), (0, 255, 0), 2)
             box = np.array([[rect[0], rect[1]], [rect[0]+rect[2], rect[1]], [rect[0]+rect[2], rect[1]+rect[3]], [rect[0], rect[1]+rect[3]]])
             conts.append(box)
-        return tmp, conts
+            line_box = [rect[0], rect[1], rect[2], rect[3]]
+            line_conts.append(line_box)
+        return tmp, conts, line_conts
 
 parser = argparse.ArgumentParser(description='Pre-process for OCR')
 parser.add_argument('input', help='Name of original image')
@@ -70,7 +73,7 @@ closing = cv2.morphologyEx(schritt3, cv2.MORPH_CLOSE, kernel)
 
 schritt4 = morph(closing, 50, 3)
 schritt5 = lapcalian(schritt4)
-res, conts = getTextbox(schritt4, img)
+res, conts, line_conts = getTextbox(schritt5, img)
 # print(conts)
 
 # output result image with boxes
@@ -83,5 +86,12 @@ cv2.imwrite(args.output, res)
 # white_fill = cv2.bitwise_and(img, stencil)
 # cv2.imwrite('result.tif', white_fill)
 
+# Textbox ausschneiden mit np (box = image[y:y+h, x:x+w])
+line_num = 0
+for c in line_conts:
+    line = grau_img[c[1]:c[1]+c[3], c[0]:c[0]+c[2]]
+    n, bi_line = binarize(line)
+    cv2.imwrite('line_{}.tif'.format(line_num), bi_line)
+    line_num += 1
 
 
